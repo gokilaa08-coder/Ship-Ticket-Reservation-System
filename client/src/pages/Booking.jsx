@@ -30,6 +30,8 @@ function Booking() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
+    console.log("TOKEN =", token);
 
     try {
       const token = localStorage.getItem("token");
