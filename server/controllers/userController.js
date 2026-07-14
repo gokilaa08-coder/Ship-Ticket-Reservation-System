@@ -2,11 +2,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
+// Register User
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     userModel.createUser(name, email, hashedPassword, (err, result) => {
@@ -28,6 +28,8 @@ const registerUser = async (req, res) => {
     });
   }
 };
+
+// Login User
 const loginUser = (req, res) => {
   const { email, password } = req.body;
 
@@ -47,27 +49,23 @@ const loginUser = (req, res) => {
     const user = results[0];
 
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Email:", email);
-    console.log("Entered Password:", password);
-    console.log("Stored Password:", user.password);
-    console.log("Password Match:", isMatch);
 
     if (!isMatch) {
       return res.status(401).json({
         message: "Invalid Password",
       });
     }
-    const token = jwt.sign(
-  {
-    id: user.id,
-    email: user.email,
-  },
-  "mysecretkey",
-  {
-    expiresIn: "1h",
-  }
-);
 
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      "mysecretkey",
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.status(200).json({
       message: "Login Successful",
@@ -76,12 +74,26 @@ const loginUser = (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-     },
+      },
     });
+  });
+};
+
+// Get All Users
+const getAllUsers = (req, res) => {
+  userModel.getAllUsers((err, results) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Failed to fetch users",
+      });
+    }
+
+    res.status(200).json(results);
   });
 };
 
 module.exports = {
   registerUser,
   loginUser,
+  getAllUsers,
 };

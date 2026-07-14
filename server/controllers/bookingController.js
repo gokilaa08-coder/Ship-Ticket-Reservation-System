@@ -1,67 +1,32 @@
 const bookingModel = require("../models/bookingModel");
-const shipModel = require("../models/shipModel");
 
-// Book Ticket
-const bookTicket = (req, res) => {
-  const userId = req.user.id;
-  const { shipId, passengers } = req.body;
+// Create Booking
+const createBooking = (req, res) => {
+  const { userId, shipId, passengers } = req.body;
 
-  shipModel.getShipById(shipId, (err, ships) => {
-    if (err) {
-      return res.status(500).json({
-        message: "Server Error",
-      });
-    }
-
-    if (ships.length === 0) {
-      return res.status(404).json({
-        message: "Ship not found",
-      });
-    }
-
-    const ship = ships[0];
-
-    if (ship.available_seats < passengers) {
-      return res.status(400).json({
-        message: "Not enough seats available",
-      });
-    }
-
-    bookingModel.createBooking(
-      userId,
-      shipId,
-      passengers,
-      (err, result) => {
-        if (err) {
-          return res.status(500).json({
-            message: "Booking Failed",
-          });
-        }
-
-        shipModel.updateSeats(shipId, passengers, (err) => {
-          if (err) {
-            return res.status(500).json({
-              message: "Seat Update Failed",
-            });
-          }
-
-          res.status(201).json({
-            message: "Ticket Booked Successfully",
-            bookingId: result.insertId,
-          });
+  bookingModel.createBooking(
+    userId,
+    shipId,
+    passengers,
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          message: "Booking Failed",
         });
       }
-    );
-  });
+
+      res.status(201).json({
+        message: "Booking Successful",
+      });
+    }
+  );
 };
 
-// My Bookings
-const getMyBookings = (req, res) => {
-  const userId = req.user.id;
-    console.log("Logged in User ID:", userId);
+// User Bookings
+const getUserBookings = (req, res) => {
+  const userId = req.params.userId;
 
   bookingModel.getBookingsByUser(userId, (err, results) => {
-    console.log("Bookings:", results);
     if (err) {
       return res.status(500).json({
         message: "Failed to fetch bookings",
@@ -72,53 +37,55 @@ const getMyBookings = (req, res) => {
   });
 };
 
-// Cancel Booking
-const cancelBooking = (req, res) => {
-  const bookingId = req.params.id;
+// ⭐ Logged-in User Bookings
+const getMyBookings = (req, res) => {
+  const userId = req.user.id;
 
-  bookingModel.getBookingById(bookingId, (err, bookings) => {
+  bookingModel.getBookingsByUser(userId, (err, results) => {
     if (err) {
       return res.status(500).json({
-        message: "Server Error",
+        message: "Failed to fetch bookings",
       });
     }
 
-    if (bookings.length === 0) {
-      return res.status(404).json({
-        message: "Booking not found",
+    res.status(200).json(results);
+  });
+};
+
+// Delete Booking
+const deleteBooking = (req, res) => {
+  const bookingId = req.params.id;
+
+  bookingModel.deleteBooking(bookingId, (err) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Delete Failed",
       });
     }
 
-    const booking = bookings[0];
-
-    bookingModel.deleteBooking(bookingId, (err) => {
-      if (err) {
-        return res.status(500).json({
-          message: "Failed to cancel booking",
-        });
-      }
-
-      shipModel.restoreSeats(
-        booking.ship_id,
-        booking.passengers,
-        (err) => {
-          if (err) {
-            return res.status(500).json({
-              message: "Seat restore failed",
-            });
-          }
-
-          res.status(200).json({
-            message: "Booking Cancelled Successfully",
-          });
-        }
-      );
+    res.json({
+      message: "Booking Deleted Successfully",
     });
   });
 };
 
+// Admin - Get All Bookings
+const getAllBookings = (req, res) => {
+  bookingModel.getAllBookings((err, results) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Failed to fetch bookings",
+      });
+    }
+
+    res.status(200).json(results);
+  });
+};
+
 module.exports = {
-  bookTicket,
+  createBooking,
+  getUserBookings,
   getMyBookings,
-  cancelBooking,
+  deleteBooking,
+  getAllBookings,
 };

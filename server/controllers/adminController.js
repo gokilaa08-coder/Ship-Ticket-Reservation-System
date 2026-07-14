@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const adminModel = require("../models/adminModel");
 
+// Admin Login
 const adminLogin = (req, res) => {
   const { email, password } = req.body;
 
@@ -51,6 +52,23 @@ const adminLogin = (req, res) => {
   });
 };
 
+// Dashboard Statistics
+const getDashboardStats = (req, res) => {
+  adminModel.getDashboardStats((err, result) => {
+    if (err) {
+      console.log(err);
+
+      return res.status(500).json({
+        message: "Failed to load dashboard",
+        error: err.message,
+     });
+    }
+
+    res.status(200).json(result[0]);
+  });
+};
+
 module.exports = {
   adminLogin,
+  getDashboardStats,
 };
