@@ -16,7 +16,6 @@ function ShipList() {
   const fetchShips = async () => {
     try {
       const res = await API.get("/ships");
-
       setShips(res.data);
       setFilteredShips(res.data);
     } catch (error) {
@@ -42,6 +41,25 @@ function ShipList() {
     setFilteredShips(ships);
   };
 
+  const deleteShip = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this ship?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await API.delete(`/ships/${id}`);
+
+      alert("🚢 Ship Deleted Successfully");
+
+      fetchShips();
+    } catch (error) {
+      console.log(error);
+      alert("Failed to delete ship");
+    }
+  };
+
   return (
     <div
       style={{
@@ -60,7 +78,7 @@ function ShipList() {
         🚢 Available Ships
       </h1>
 
-      {/* Search Box */}
+      {/* Search */}
 
       <div
         style={{
@@ -124,7 +142,7 @@ function ShipList() {
         </button>
       </div>
 
-      {/* Ship Cards */}
+      {/* Ships */}
 
       {filteredShips.length === 0 ? (
         <h2 style={{ textAlign: "center" }}>No Ships Found 🚢</h2>
@@ -156,24 +174,60 @@ function ShipList() {
             </p>
 
             <p>
-              <strong>💰 Price:</strong> ₹
-              {ship.price || 2500}
+              <strong>💰 Price:</strong> ₹{ship.price}
             </p>
 
-            <Link to={`/booking/${ship.id}`}>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                flexWrap: "wrap",
+                marginTop: "15px",
+              }}
+            >
+              <Link to={`/booking/${ship.id}`}>
+                <button
+                  style={{
+                    background: "#198754",
+                    color: "white",
+                    border: "none",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  🎫 Book Now
+                </button>
+              </Link>
+
+              <Link to={`/editship/${ship.id}`}>
+                <button
+                  style={{
+                    background: "#ffc107",
+                    border: "none",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                  }}
+                >
+                  ✏ Edit
+                </button>
+              </Link>
+
               <button
+                onClick={() => deleteShip(ship.id)}
                 style={{
-                  background: "#198754",
+                  background: "#dc3545",
                   color: "white",
                   border: "none",
-                  padding: "10px 20px",
+                  padding: "10px 15px",
                   borderRadius: "5px",
                   cursor: "pointer",
                 }}
               >
-                Book Now
+                🗑 Delete
               </button>
-            </Link>
+            </div>
           </div>
         ))
       )}

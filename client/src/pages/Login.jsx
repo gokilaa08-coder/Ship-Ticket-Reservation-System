@@ -1,80 +1,146 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../services/api";
+
+import "./Login.css";
+
+import background from "../assets/images/background.jpg";
+import shipLogo from "../assets/icons/ship-logo.png";
 
 function Login() {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [email, setEmail] = useState("");
 
-  const handleSubmit = async (e) => {
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await API.post("/users/login", formData);
+      const res = await API.post("/users/login", {
+        email,
+        password,
+      });
+      console.log("Login Response:", res.data);
 
-      // Save JWT Token
+      // Save JWT
       localStorage.setItem("token", res.data.token);
 
-      // Save User Details
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Save User
+      localStorage.setItem(
+        "user",
+        JSON.stringify(res.data.user)
+      );
 
       alert("Login Successful!");
 
-      // Redirect to Ships Page
-      navigate("/ships");
+      navigate("/");
     } catch (err) {
-      alert(err.response?.data?.message || "Login Failed");
+      console.log(err);
+
+      alert(
+        err.response?.data?.message || "Login Failed"
+      );
     }
   };
 
   return (
     <div
+      className="login-container"
       style={{
-        width: "350px",
-        margin: "50px auto",
-        textAlign: "center",
+        backgroundImage: `url(${background})`,
       }}
     >
-      <h2>Login</h2>
+      <div className="left-side">
+        <div className="glass-card">
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Enter Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+          <img
+            src={shipLogo}
+            alt="Ship"
+            className="ship-logo"
+          />
 
-        <br />
-        <br />
+          <h1>Welcome Back 👋</h1>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+          <p>Sign in to continue your journey</p>
 
-        <br />
-        <br />
+          <form onSubmit={handleLogin}>
 
-        <button type="submit">Login</button>
-      </form>
+            <label>Email</label>
+
+            <div className="input-box">
+              <FaEnvelope className="icon"/>
+
+              <input
+                type="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <label>Password</label>
+
+            <div className="input-box">
+              <FaLock className="icon"/>
+
+              <input
+                type={showPassword?"text":"password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e)=>setPassword(e.target.value)}
+                required
+              />
+
+              <span
+                className="eye"
+                onClick={()=>setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash/> : <FaEye/>}
+              </span>
+
+            </div>
+
+            <button className="login-btn">
+              Login →
+            </button>
+
+          </form>
+
+          <p className="register">
+            Don't have an account?
+
+            <Link to="/register">
+              Register
+            </Link>
+
+          </p>
+
+        </div>
+      </div>
+
+      <div className="right-side">
+
+        <h1 className="title">
+          SHIP TICKET
+        </h1>
+
+        <h2 className="subtitle">
+          RESERVATION
+        </h2>
+
+        <p className="tagline">
+          Sail Smarter.
+          <span> Book Faster.</span>
+        </p>
+
+      </div>
+
     </div>
   );
 }

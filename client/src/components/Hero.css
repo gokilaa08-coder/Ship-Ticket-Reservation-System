@@ -1,0 +1,199 @@
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:0 8%;
+
+    background:
+    linear-gradient(
+        rgba(0,15,40,.65),
+        rgba(0,25,60,.65)
+    ),
+    url("../assets/images/hero-bg.jpg");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    color:#fff;
+}
+
+.hero-content{
+    max-width:650px;
+    transform:translateY(-30px);
+}
+
+.hero-small{
+    display:inline-block;
+    padding:12px 25px;
+    border-radius:50px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.25);
+    backdrop-filter:blur(8px);
+
+    color:#7bdcff;
+    font-size:18px;
+    font-weight:600;
+
+    margin-bottom:25px;
+}
+
+.hero h1{
+    font-size:74px;
+    font-weight:800;
+    line-height:1.08;
+    margin-bottom:25px;
+    color:#fff;
+}
+
+.hero h1 span{
+    color:#18d8ff;
+    text-shadow:
+        0 0 15px rgba(24,216,255,.35),
+        0 0 35px rgba(24,216,255,.25);
+}
+
+.hero-description{
+    font-size:24px;
+    line-height:1.8;
+    max-width:560px;
+    color:#eef5ff;
+    margin-bottom:45px;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:20px;
+}
+
+.btn-primary{
+    padding:18px 42px;
+    border:none;
+    border-radius:50px;
+
+    background:#12c9ff;
+    color:#fff;
+
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+
+    transition:.35s;
+
+    box-shadow:
+    0 15px 35px rgba(18,201,255,.35);
+}
+
+.btn-primary:hover{
+
+    transform:translateY(-6px);
+
+    background:#00b5ff;
+
+    box-shadow:
+    0 25px 45px rgba(18,201,255,.45);
+
+}
+
+.btn-secondary{
+
+    padding:18px 42px;
+
+    border:2px solid rgba(255,255,255,.7);
+
+    border-radius:50px;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(8px);
+
+    color:white;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+}
+
+.btn-secondary:hover{
+
+    background:white;
+
+    color:#003c82;
+
+    transform:translateY(-6px);
+
+}
+
+@media(max-width:992px){
+
+.hero{
+
+padding:120px 30px;
+
+justify-content:center;
+
+text-align:center;
+
+}
+
+.hero-content{
+
+transform:none;
+
+}
+
+.hero-buttons{
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+}
+
+.hero h1{
+
+font-size:56px;
+
+}
+
+.hero-description{
+
+font-size:20px;
+
+}
+
+}
+
+@media(max-width:600px){
+
+.hero h1{
+
+font-size:42px;
+
+}
+
+.hero-description{
+
+font-size:18px;
+
+}
+
+.hero-small{
+
+font-size:15px;
+
+}
+
+.btn-primary,
+.btn-secondary{
+
+width:100%;
+
+}
+
+}
