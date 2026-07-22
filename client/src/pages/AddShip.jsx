@@ -1,14 +1,15 @@
+
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import API from "../services/api";
+import "./AddShip.css";
 
 function AddShip() {
-  const navigate = useNavigate();
-
   const [ship, setShip] = useState({
     ship_name: "",
     source: "",
     destination: "",
+    departure_time: "",
+    arrival_time: "",
     available_seats: "",
     price: "",
   });
@@ -28,27 +29,27 @@ function AddShip() {
 
       alert("🚢 Ship Added Successfully!");
 
-      navigate("/ships");
-    } catch (error) {
-      console.log(error);
+      setShip({
+        ship_name: "",
+        source: "",
+        destination: "",
+        available_seats: "",
+        price: "",
+      });
+
+    } catch (err) {
+      console.log(err);
       alert("Failed to Add Ship");
     }
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "500px",
-        margin: "40px auto",
-        padding: "30px",
-        background: "#fff",
-        borderRadius: "10px",
-        boxShadow: "0 0 10px rgba(0,0,0,0.2)",
-      }}
-    >
-      <h2 style={{ textAlign: "center" }}>➕ Add New Ship</h2>
+    <div className="add-ship-page">
 
-      <form onSubmit={handleSubmit}>
+      <h1>➕ Add New Ship</h1>
+
+      <form className="add-ship-form" onSubmit={handleSubmit}>
+
         <input
           type="text"
           name="ship_name"
@@ -57,8 +58,6 @@ function AddShip() {
           onChange={handleChange}
           required
         />
-
-        <br /><br />
 
         <input
           type="text"
@@ -69,8 +68,6 @@ function AddShip() {
           required
         />
 
-        <br /><br />
-
         <input
           type="text"
           name="destination"
@@ -79,8 +76,21 @@ function AddShip() {
           onChange={handleChange}
           required
         />
+        <input
+          type="time"
+          name="departure_time"
+          value={ship.departure_time}
+          onChange={handleChange}
+          required
+        />
 
-        <br /><br />
+        <input
+          type="time"
+          name="arrival_time"
+          value={ship.arrival_time}
+          onChange={handleChange}
+          required
+        />
 
         <input
           type="number"
@@ -91,8 +101,6 @@ function AddShip() {
           required
         />
 
-        <br /><br />
-
         <input
           type="number"
           name="price"
@@ -102,14 +110,15 @@ function AddShip() {
           required
         />
 
-        <br /><br />
-
         <button type="submit">
           Add Ship
         </button>
+
       </form>
+
     </div>
   );
 }
 
 export default AddShip;
+

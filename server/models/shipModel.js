@@ -1,8 +1,9 @@
+
 const db = require("../config/db");
 
 // Get All Ships
 const getAllShips = (callback) => {
-  db.query("SELECT * FROM ships", callback);
+  db.query("SELECT * FROM ships ORDER BY id DESC", callback);
 };
 
 // Get Ship By ID
@@ -32,8 +33,17 @@ const restoreSeats = (shipId, seats, callback) => {
 const addShip = (ship, callback) => {
   const sql = `
     INSERT INTO ships
-    (ship_name, source, destination, available_seats, price)
-    VALUES (?, ?, ?, ?, ?)
+    (
+      ship_name,
+      source,
+      destination,
+      departure_time,
+      arrival_time,
+      available_seats,
+      price,
+      image
+   )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
@@ -42,8 +52,11 @@ const addShip = (ship, callback) => {
       ship.ship_name,
       ship.source,
       ship.destination,
+      ship.departure_time,
+      ship.arrival_time,
       ship.available_seats,
       ship.price,
+      ship.image,
     ],
     callback
   );
@@ -66,8 +79,11 @@ const updateShip = (id, ship, callback) => {
       ship_name = ?,
       source = ?,
       destination = ?,
+      departure_time = ?,
+      arrival_time = ?,
       available_seats = ?,
       price = ?
+      image = ?
     WHERE id = ?
   `;
 
@@ -77,8 +93,11 @@ const updateShip = (id, ship, callback) => {
       ship.ship_name,
       ship.source,
       ship.destination,
+      ship.departure_time,
+      ship.arrival_time,
       ship.available_seats,
       ship.price,
+      ship.image,
       id,
     ],
     callback
@@ -94,3 +113,4 @@ module.exports = {
   deleteShip,
   updateShip,
 };
+

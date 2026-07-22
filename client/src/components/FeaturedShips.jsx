@@ -1,46 +1,57 @@
 import "./FeaturedShips.css";
 
-const ships = [
-  {
-    id: 1,
-    name: "Ocean Star",
-    route: "Chennai → Goa",
-    price: 2999,
-    image: "https://picsum.photos/400/250?random=1",
-  },
-  {
-    id: 2,
-    name: "Blue Pearl",
-    route: "Kochi → Lakshadweep",
-    price: 3999,
-    image: "https://picsum.photos/400/250?random=2",
-  },
-  {
-    id: 3,
-    name: "Sea Queen",
-    route: "Mumbai → Goa",
-    price: 2499,
-    image: "https://picsum.photos/400/250?random=3",
-  },
-];
+import oceanStar from "../assets/ships/ocean-star.jpg";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function FeaturedShips() {
+
+  const [ships, setShips] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/ships")
+      .then((res) => {
+        setShips(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <section className="featured">
       <h2>Featured Ships</h2>
+      <p>Choose your next luxury ocean journey.</p>
 
-      <div className="ship-container">
+      <div className="ship-grid">
         {ships.map((ship) => (
           <div className="ship-card" key={ship.id}>
-            <img src={ship.image} alt={ship.name} />
 
-            <h3>{ship.name}</h3>
+            {/* Default image for now */}
+            <img src={oceanStar} alt={ship.ship_name} />
 
-            <p>{ship.route}</p>
+            <div className="ship-info">
+              <h3>{ship.ship_name}</h3>
 
-            <h4>₹{ship.price}</h4>
+              <p>
+                📍 {ship.source} → {ship.destination}
+              </p>
 
-            <button>Book Now</button>
+              <p className="seats">
+                🪑 Available Seats: <strong>{ship.available_seats}</strong>
+              </p>
+              <h4>₹ {ship.price}</h4>
+
+             <button
+                onClick={() => navigate(`/booking/${ship.id}`)}
+             > 
+                Book Now
+             </button>
+            </div>
+
           </div>
         ))}
       </div>

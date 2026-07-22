@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AddShip from "./pages/AddShip";
 import EditShip from "./pages/EditShip";
 import Users from "./pages/Users";
+import Booking from "./pages/Booking";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route path="/ships" element={<ShipList />} />
+        <Route path="/booking/:id" element={<Booking />} />
 
         
         <Route path="/bookings" element={<Bookings />} />

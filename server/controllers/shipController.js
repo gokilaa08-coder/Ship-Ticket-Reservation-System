@@ -13,14 +13,38 @@ const getShips = (req, res) => {
   });
 };
 
+// ⭐ Get Single Ship
+const getShipById = (req, res) => {
+  const { id } = req.params;
+
+  shipModel.getShipById(id, (err, results) => {
+    if (err) {
+      return res.status(500).json({
+        message: "Failed to fetch ship",
+      });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        message: "Ship not found",
+      });
+    }
+
+    res.json(results[0]);
+  });
+};
+
 // Add Ship
 const addShip = (req, res) => {
   const {
     ship_name,
     source,
     destination,
+    departure_time,
+    arrival_time,
     available_seats,
     price,
+    image,
   } = req.body;
 
   shipModel.addShip(
@@ -28,8 +52,11 @@ const addShip = (req, res) => {
       ship_name,
       source,
       destination,
+      departure_time,
+      arrival_time,
       available_seats,
       price,
+      image,
     },
     (err) => {
       if (err) {
@@ -72,8 +99,11 @@ const updateShip = (req, res) => {
     ship_name,
     source,
     destination,
+    departure_time,
+    arrival_time,
     available_seats,
     price,
+    image,
   } = req.body;
 
   shipModel.updateShip(
@@ -82,8 +112,11 @@ const updateShip = (req, res) => {
       ship_name,
       source,
       destination,
+      departure_time,
+      arrival_time,
       available_seats,
       price,
+      image,
     },
     (err) => {
       if (err) {
@@ -103,6 +136,7 @@ const updateShip = (req, res) => {
 
 module.exports = {
   getShips,
+  getShipById,
   addShip,
   deleteShip,
   updateShip,

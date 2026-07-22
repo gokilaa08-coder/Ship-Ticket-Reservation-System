@@ -1,141 +1,89 @@
+
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import AdminSidebar from "../components/AdminSidebar";
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-import { Bar } from "react-chartjs-2";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+import "./AdminDashboard.css";
 
 function AdminDashboard() {
-  const [stats, setStats] =useState({
-    totalShips: 0,
-    totalUsers: 0,
-    totalBookings: 0,
-  });
+  const [totalShips, setTotalShips] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalBookings, setTotalBookings] = useState(0);
 
   useEffect(() => {
-    fetchDashboard();
+    fetchDashboardData();
   }, []);
 
-  const fetchDashboard = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const res = await API.get("/admin/dashboard");
-      setStats(res.data);
+      const ships = await API.get("/ships");
+      const users = await API.get("/users");
+      const bookings = await API.get("/bookings");
+
+      setTotalShips(ships.data.length);
+      setTotalUsers(users.data.length);
+      setTotalBookings(bookings.data.length);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const chartData = {
-    labels: ["Ships", "Users", "Bookings"],
-    datasets: [
-      {
-        label: "System Statistics",
-        data: [
-          stats.totalShips,
-          stats.totalUsers,
-          stats.totalBookings,
-        ],
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-    },
-  };
-
   return (
-    <>
-      <AdminSidebar />
+    <div className="admin-dashboard">
+
+      <h1>🚢 Admin Dashboard</h1>
 
       <div
         style={{
-          marginLeft: "250px",
-          padding: "30px",
-          background: "#f5f5f5",
-          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          marginBottom: "40px",
+          flexWrap: "wrap",
         }}
       >
-        <h1 style={{ color: "#0d6efd" }}>
-          📊 Admin Dashboard
-        </h1>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "20px",
-            marginTop: "30px",
-            flexWrap: "wrap",
-          }}
-        >
-          <div style={card}>
-            <h2>🚢</h2>
-            <h3>{stats.totalShips}</h3>
-            <p>Total Ships</p>
-          </div>
-
-          <div style={card}>
-            <h2>👤</h2>
-            <h3>{stats.totalUsers}</h3>
-            <p>Total Users</p>
-          </div>
-
-          <div style={card}>
-            <h2>🎫</h2>
-            <h3>{stats.totalBookings}</h3>
-            <p>Total Bookings</p>
-          </div>
+        <div className="card">
+          <h2>🚢 Total Ships</h2>
+          <h1>{totalShips}</h1>
         </div>
 
-        <div
-          style={{
-            background: "#fff",
-            marginTop: "40px",
-            padding: "20px",
-            borderRadius: "10px",
-          }}
-        >
-          <h2>System Overview</h2>
+        <div className="card">
+          <h2>👥 Total Users</h2>
+          <h1>{totalUsers}</h1>
+        </div>
 
-          <Bar
-            data={chartData}
-            options={chartOptions}
-          />
+        <div className="card">
+          <h2>🎫 Total Bookings</h2>
+          <h1>{totalBookings}</h1>
         </div>
       </div>
-    </>
+
+      <div className="dashboard-cards">
+
+        <Link to="/admin/addship" className="card">
+          <h2>➕ Add Ship</h2>
+          <p>Add a new ship to the system.</p>
+        </Link>
+
+        <Link to="/ships" className="card">
+          <h2>🚢 Manage Ships</h2>
+          <p>View, edit and delete ships.</p>
+        </Link>
+
+        <Link to="/users" className="card">
+          <h2>👥 View Users</h2>
+          <p>See all registered users.</p>
+        </Link>
+
+        <Link to="/bookings" className="card">
+          <h2>🎫 View Bookings</h2>
+          <p>Manage all bookings.</p>
+        </Link>
+
+      </div>
+
+    </div>
   );
 }
 
-const card = {
-  background: "#fff",
-  padding: "20px",
-  borderRadius: "10px",
-  width: "220px",
-  textAlign: "center",
-  boxShadow: "0 5px 10px rgba(0,0,0,0.2)",
-};
-
 export default AdminDashboard;
+

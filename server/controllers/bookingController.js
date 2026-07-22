@@ -2,14 +2,28 @@ const bookingModel = require("../models/bookingModel");
 
 // Create Booking
 const createBooking = (req, res) => {
-  const { userId, shipId, passengers } = req.body;
+
+  const {
+    userId,
+    shipId,
+    passengerName,
+    phone,
+    travelDate,
+    passengers,
+  } = req.body;
 
   bookingModel.createBooking(
     userId,
     shipId,
+    passengerName,
+    phone,
+    travelDate,
     passengers,
-    (err, result) => {
+    (err) => {
+
       if (err) {
+        console.log(err);
+
         return res.status(500).json({
           message: "Booking Failed",
         });
@@ -18,10 +32,11 @@ const createBooking = (req, res) => {
       res.status(201).json({
         message: "Booking Successful",
       });
+
     }
   );
-};
 
+};
 // User Bookings
 const getUserBookings = (req, res) => {
   const userId = req.params.userId;
@@ -39,9 +54,15 @@ const getUserBookings = (req, res) => {
 
 // ⭐ Logged-in User Bookings
 const getMyBookings = (req, res) => {
+
+  console.log("Logged User:", req.user);
+
   const userId = req.user.id;
 
   bookingModel.getBookingsByUser(userId, (err, results) => {
+
+    console.log("Bookings:", results);
+
     if (err) {
       return res.status(500).json({
         message: "Failed to fetch bookings",
@@ -51,7 +72,6 @@ const getMyBookings = (req, res) => {
     res.status(200).json(results);
   });
 };
-
 // Delete Booking
 const deleteBooking = (req, res) => {
   const bookingId = req.params.id;
